@@ -39,35 +39,23 @@ $$ \text{Maximize} \quad \sum_{k \in K} (p \cdot \delta_k \cdot d_k) - \sum_{s \
 
 ### Constraints
 
-**1. Coverage and Assignment Constraints:**
-Every zone must be assigned to exactly one facility within its reachable radius.
-$$ \sum_{s \in N_z} x_{z,s} = 1 \quad \forall z \in Z $$
+$$ \sum_{s \in N_z} x_{z,s} = 1 \quad \forall z \in Z \quad \quad (1)$$
 
-**2. Exclusivity Constraint:**
-To prevent overlapping assignments from conflicting stations within a single zone's reachable area, at most one facility can be open among the candidate stations available to that zone.
-$$ \sum_{s \in N_z} y_s \le 1 \quad \forall z \in Z $$
+$$ \sum_{s \in N_z} y_s \le 1 \quad \forall z \in Z \quad \quad (2)$$
 
-**3. Valid Facility Assignment:**
-A zone can only be assigned to a station if that station is open.
-$$ x_{z,s} \le y_s \quad \forall z \in Z, s \in N_z $$
+$$ x_{z,s} \le y_s \quad \forall z \in Z, s \in N_z \quad \quad (3)$$
 
-**4. Demand Elasticity:**
-Actual demand drops as the fare increases, reaching zero if the fare hits the maximum willingness to pay.
-$$ d_k \le D_k \left( 1 - \frac{p}{P_{max}} \right) \quad \forall k \in K $$
+$$ d_k \le D_k \left( 1 - \frac{p}{P_{max}} \right) \quad \forall k \in K \quad \quad (4)$$
 
-**5. Demand-to-Station Linking:**
-The total actual demand for an OD pair must equal the sum of demand assigned across reachable origin stations.
-$$ \sum_{s \in N_o} w_{k,s} = d_k \quad \forall k=(o,d) \in K $$
+$$ \sum_{s \in N_o} w_{k,s} = d_k \quad \forall k=(o,d) \in K \quad \quad (5)$$
 
-Demand can only originate from station $s$ if the origin zone $o$ is assigned to that station.
-$$ w_{k,s} \le D_k \cdot x_{o,s} \quad \forall k=(o,d) \in K, s \in N_o $$
+$$ w_{k,s} \le D_k \cdot x_{o,s} \quad \forall k=(o,d) \in K, s \in N_o \quad \quad (6)$$
 
-**6. Fleet Sizing and Station Capacity:**
-The number of vehicles at any location cannot exceed the physical station capacity, and vehicles can only be placed at open stations.
-$$ v_s \le V_{max} \cdot y_s \quad \forall s \in S $$
+$$ v_s \le V_{max} \cdot y_s \quad \forall s \in S \quad \quad (7)$$
 
-The total demand originating from a specific station cannot exceed the transportation capacity of the vehicles stationed there during the peak period.
-$$ \sum_{k=(o,d) \in K \mid s \in N_o} w_{k,s} \le T \cdot v_s \quad \forall s \in S $$
+$$ \sum_{k=(o,d) \in K \mid s \in N_o} w_{k,s} \le T \cdot v_s \quad \forall s \in S \quad \quad (8)$$
+
+Constraint (1) guarantees full coverage by ensuring that every zone is assigned to exactly one facility within its reachable radius. Constraint (2) enforces exclusivity to prevent overlapping assignments; it dictates that at most one facility can be open among all the candidate stations available to any single zone. Constraint (3) ensures a valid facility assignment, establishing that a zone can only be assigned to a station if that station is actively open. Constraint (4) introduces demand elasticity, mathematically decreasing the actual demand as the fare increases, ultimately reaching zero if the fare hits a user's maximum willingness to pay. Constraints (5) and (6) link the served demand to specific stations; equation (5) ensures the total actual demand for an OD pair perfectly matches the sum of the demand assigned across reachable origin stations, while equation (6) dictates that demand can only originate from a station if the origin zone is officially assigned to it. Finally, Constraints (7) and (8) govern fleet sizing and capacity. Equation (7) ensures the number of vehicles at any location does not exceed the physical station capacity and that vehicles are only placed at opened stations. Equation (8) ensures that the total demand originating from a specific station does not exceed the transportation capacity of the vehicles stationed there during the peak period.
 
 ## Dependencies
 * Python 3.x
@@ -80,3 +68,4 @@ Just place a valid `map.geojson` file representing the area of interest in the w
 
 ```bash
 python micromobility_model.py
+
